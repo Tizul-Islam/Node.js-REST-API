@@ -12,7 +12,7 @@ export const productController = (req: IncomingMessage, res: ServerResponse) => 
     const id = urlParts && urlParts[1] === "products" ? Number(urlParts[2]) : null;
     // console.log("ID is ", id)
 
-    if (url?.startsWith("/products") && method === "GET") {
+    if (url === "/products" && method === "GET") {
 
         // const products =[
 
@@ -28,15 +28,13 @@ export const productController = (req: IncomingMessage, res: ServerResponse) => 
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ message: "this is products router ", data: products }))
     }
-    else if (method === "GET" && id !== null) {
+    else if (method === "GET" && id !== null) { // get single product by id
         const products = readProduct();
         const product = products.find((p: IProduct) => p.id === id);
         // console.log("product is ", product);
 
-
-
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: "this is products router ", data: product }))
+        res.end(JSON.stringify({ message: "this is products seccessfull recive your product", data: product }))
     }
 
 }  
