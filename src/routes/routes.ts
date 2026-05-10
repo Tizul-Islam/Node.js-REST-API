@@ -1,0 +1,23 @@
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { productController } from "../controllers/product.controller.ts";
+
+export const routerHandler = (req: IncomingMessage, res: ServerResponse) => {
+    const url = req.url;
+    const method = req.method;
+
+    if (url === "/" && method === "GET") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ message: "tHIS IS ROOT ROUTER" }))
+
+    } else if (url?.startsWith("/products") && method === "GET") {
+        {
+            productController(req, res);
+        }
+    }
+    else {
+
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ message: "this router is not found " }))
+
+    }
+}
