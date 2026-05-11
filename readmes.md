@@ -3,10 +3,14 @@ server.ts file create korob
  
 install
 
-npm init -y
-npm i -D typescript @types/node
-npx tsc --init
-npm i tsx
+package.json file // npm init -y
+JavaScript-এর typed version // npm i -D typescript @types/node
+tsconfig.json // npx tsc --init
+.ts file directly run //npm i tsx
+
+package .env file 
+PORT=3000
+npm install dotenv
 
 
 

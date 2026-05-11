@@ -14,10 +14,10 @@ export const readProduct = () => {
     return JSON.parse(products);
 
 
+}
 
 
-
-
-
-
+export const addProduct = (payload:any) => {
+    console.log("payload is ", payload);
+    fs.writeFileSync(filePath, JSON.stringify(payload));    
 }

@@ -1,40 +1,134 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import { readProduct } from "../service/product.service.ts";
-import { log } from "node:console";
+import { request, type IncomingMessage, type ServerResponse } from "node:http";
+import { addProduct, readProduct } from "../service/product.service.ts";
 import type { IProduct } from "../type/product.type.ts";
+import { parseBody } from "../utility/parseBody.ts";
+import { sendResponse } from "../utility/sendRespons.ts";
 
-export const productController = (req: IncomingMessage, res: ServerResponse) => {
-    const url = req.url;
-    const method = req.method;
+export const productController = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+) => {
+  const url = req.url;
+  const method = req.method;
 
-    const urlParts = url?.split("/");
-    // console.log(urlParts);
-    const id = urlParts && urlParts[1] === "products" ? Number(urlParts[2]) : null;
-    // console.log("ID is ", id)
+  const urlParts = url?.split("/");
 
-    if (url === "/products" && method === "GET") {
+  const id =
+    urlParts && urlParts[1] === "products" ? Number(urlParts[2]) : null;
+  
 
-        // const products =[
-
-        //     {
-
-        //         id:1,
-        //         name:"Product 1",
-        //         price:100
-        //     }
-        // ];
-        const products = readProduct();
-
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: "this is products router ", data: products }))
-    }
-    else if (method === "GET" && id !== null) { // get single product by id
-        const products = readProduct();
-        const product = products.find((p: IProduct) => p.id === id);
-        // console.log("product is ", product);
-
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: "this is products seccessfull recive your product", data: product }))
+  //get all product
+  if (url === "/products" && method === "GET") {
+    try {
+      const products = readProduct();
+      return sendResponse(
+        res,
+        200,
+        true,
+        "Products fetched successfully",
+        products,
+      );
+    } catch (error) {
+      return sendResponse(res, 500, false, "something went wrong", error);
     }
 
-}  
+    // get all product by id
+  } else if (method === "GET" && id !== null) {
+    try {
+      // get single product by id
+      const products = readProduct();
+      const product = products.find((p: IProduct) => p.id === id);
+      
+      if (!product) {
+        return sendResponse(res, 404, false, "Product not found!");
+      }
+
+      return sendResponse(
+        res,
+        200,
+        true,
+        "Product retrieved successfully",
+        product,
+      );
+    } catch (error) {
+      return sendResponse(res, 500, false, "Something went wrong!", error);
+    }
+
+    // add new product
+  } else if (method === "POST" && url === "/products") {
+    try {
+      const body = await parseBody(req);
+      const products = readProduct();
+      const newProduct = {
+        id: Date.now(),
+        ...body,
+      };
+      products.push(newProduct);
+      
+      addProduct(products);
+      
+      return sendResponse(
+        res,
+        201,
+        true,
+        "Product added successfully",
+        newProduct,
+      );
+    } catch (error) {
+      return sendResponse(res, 500, false, "Something went wrong!", error);
+    }
+  }
+  //// update product
+  else if (method === "PUT" && id !== null) {
+    try {
+      const body = await parseBody(req);
+      const products = readProduct();
+      const index = products.findIndex((p: IProduct) => p.id === id);
+
+      if (index < 0) {
+        return sendResponse(res, 404, false, "Product not found!");
+      }
+
+      products[index] = {
+        id: products[index].id,
+        ...body,
+      };
+
+      addProduct(products);
+
+      return sendResponse(
+        res,
+        200,
+        true,
+        "Product updated successfully",
+        products[index],
+      );
+    } catch (error) {
+      return sendResponse(res, 500, false, "Something went wrong!", error);
+    }
+
+    //Delete product
+  } else if (method === "DELETE" && id !== null) {
+    try {
+      const products = readProduct();
+      const index = products.findIndex((p: IProduct) => p.id === id);
+
+      if (index < 0) {
+        return sendResponse(res, 404, false, "Product not found!");
+      }
+
+      products.splice(index, 1);
+
+      addProduct(products); // Persist changes to database
+
+      return sendResponse(
+        res,
+        200,
+        true,
+        "Product deleted successfully",
+      );
+    } catch (error) {
+      return sendResponse(res, 500, false, "Something went wrong!", error);
+    }
+  }
+};
