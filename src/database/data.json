@@ -1,1 +1,8 @@
-[{"id":4,"name":"mouse","price":500,"Bio":"very good for gaming"},{"id":1778507071043,"name":"pc","price":100000,"bio":"pc"},{"id":1778507082864,"name":"phone","price":100000,"bio":"phone"}]
+[
+    { "id": 1, "name": "Headphone", "price": 500, "Bio": "very good for gaming" },
+    { "id": 2, "name": "Keyboard", "price": 500, "Bio": "very good for gaming" },
+    { "id": 3, "name": "Monitor", "price": 500, "Bio": "very good for gaming" },
+    { "id": 4, "name": "Mouse", "price": 500, "Bio": "very good for gaming" },
+    { "id": 1778507071043, "name": "PC", "price": 100000, "Bio": "pc" }, 
+    { "id": 1778507082864, "name": "Phone", "price": 100000, "Bio": "phone" }
+]
