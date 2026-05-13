@@ -9,6 +9,6 @@ const server = createServer(
 });
 
 server.listen(config.port, () => {   // port =3000
-    console.log(`Server running at port ${config.port}`);
+    console.log("Server running at port 3000");
 });
 
