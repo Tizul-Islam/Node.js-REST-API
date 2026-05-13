@@ -1,4 +1,4 @@
-import { request, type IncomingMessage, type ServerResponse } from "node:http";
+import { type IncomingMessage, type ServerResponse } from "node:http";
 import { addProduct, readProduct } from "../service/product.service.ts";
 import type { IProduct } from "../type/product.type.ts";
 import { parseBody } from "../utility/parseBody.ts";
@@ -15,7 +15,6 @@ export const productController = async (
 
   const id =
     urlParts && urlParts[1] === "products" ? Number(urlParts[2]) : null;
-  
 
   //get all product
   if (url === "/products" && method === "GET") {
@@ -38,7 +37,7 @@ export const productController = async (
       // get single product by id
       const products = readProduct();
       const product = products.find((p: IProduct) => p.id === id);
-      
+
       if (!product) {
         return sendResponse(res, 404, false, "Product not found!");
       }
@@ -64,9 +63,9 @@ export const productController = async (
         ...body,
       };
       products.push(newProduct);
-      
+
       addProduct(products);
-      
+
       return sendResponse(
         res,
         201,
@@ -121,12 +120,7 @@ export const productController = async (
 
       addProduct(products); // Persist changes to database
 
-      return sendResponse(
-        res,
-        200,
-        true,
-        "Product deleted successfully",
-      );
+      return sendResponse(res, 200, true, "Product deleted successfully");
     } catch (error) {
       return sendResponse(res, 500, false, "Something went wrong!", error);
     }
